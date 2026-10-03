@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F5AA6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Guia RSC">
+<title>Guia RSC-PCCTAE · UNIRIO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Zilla+Slab:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --papel:#F2F4F3; --folha:#FFFFFF; --tinta:#1A2733; --suave:#5B6B78;
+  --rota:#1F5AA6; --rota-claro:#E3ECF7; --ok:#2D7A55; --ok-claro:#E2F1E9;
+  --espera:#9A6412; --espera-claro:#FBF0DC; --perigo:#A33A2E; --perigo-claro:#F9E4E1;
+  --linha:#C9D1D8;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--papel);color:var(--tinta);
+  font:17px/1.55 "Atkinson Hyperlegible",system-ui,sans-serif;padding-bottom:env(safe-area-inset-bottom)}
+h1,h2,h3,h4{font-family:"Zilla Slab",Georgia,serif;line-height:1.15;margin:0}
+a{color:var(--rota)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--rota);outline-offset:2px;border-radius:4px}
+.wrap{max-width:680px;margin:0 auto;padding:0 18px}
+
+header{background:var(--rota);color:#fff;padding:calc(22px + env(safe-area-inset-top)) 0 20px}
+header h1{font-size:1.75rem;font-weight:700}
+header p{margin:.35rem 0 0;opacity:.88;font-size:.95rem}
+.tramite{margin-top:20px;display:grid;grid-template-columns:repeat(4,1fr);position:relative}
+.tramite::before{content:"";position:absolute;left:12.5%;right:12.5%;top:13px;height:3px;background:rgba(255,255,255,.3)}
+.tramite .barra{position:absolute;left:12.5%;top:13px;height:3px;background:#fff;transition:width .5s ease}
+.parada{text-align:center;position:relative;font-size:.78rem;line-height:1.25;opacity:.7}
+.parada i{display:block;width:29px;height:29px;margin:0 auto 6px;border-radius:50%;background:var(--rota);border:3px solid rgba(255,255,255,.45)}
+.parada.passou{opacity:.95}.parada.passou i{background:#fff;border-color:#fff}
+.parada.aqui{opacity:1;font-weight:700}
+.parada.aqui i{background:#fff;border-color:#fff;box-shadow:0 0 0 5px rgba(255,255,255,.28)}
+.parada.aqui i::after{content:"";display:block;width:11px;height:11px;margin:6px auto;border-radius:50%;background:var(--rota)}
+.onde{margin-top:16px;background:rgba(0,0,0,.18);border-radius:10px;padding:10px 14px;font-size:.92rem}
+
+main{padding:22px 0 40px}
+.intro{background:var(--folha);border:1px solid var(--linha);border-radius:12px;padding:4px 18px;margin-bottom:8px}
+.intro summary{cursor:pointer;font-family:"Zilla Slab",serif;font-size:1.2rem;font-weight:700;padding:12px 0;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.intro summary::after{content:"+";font-size:1.5rem;color:var(--rota)}
+.intro[open] summary::after{content:"–"}
+.intro p{margin:.4rem 0 .9rem}
+.intro ul{padding-left:20px;margin:.3rem 0 1rem}
+
+.fase{font-size:1.25rem;margin:30px 0 12px 46px;color:var(--rota)}
+.fase small{display:block;font-family:"Atkinson Hyperlegible",sans-serif;font-size:.85rem;color:var(--suave);font-weight:400;margin-top:2px}
+ol.rota{list-style:none;margin:0;padding:0}
+.etapa{position:relative;padding-left:46px;padding-bottom:10px}
+.etapa::before{content:"";position:absolute;left:15px;top:34px;bottom:-4px;width:3px;background:var(--linha)}
+.etapa.feita::before{background:var(--ok)}
+.etapa.ultima::before{display:none}
+.marca{position:absolute;left:0;top:4px;width:33px;height:33px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.9rem;background:var(--folha);border:3px solid var(--linha);color:var(--suave)}
+.etapa.feita .marca{background:var(--ok);border-color:var(--ok);color:#fff}
+.etapa.atual .marca{border-color:var(--rota);color:var(--rota);background:var(--rota-claro)}
+.etapa.travada .marca{background:var(--papel)}
+.cab{display:flex;width:100%;text-align:left;align-items:center;gap:10px;background:none;border:0;padding:8px 0;cursor:pointer}
+.cab h3{font-size:1.12rem;font-weight:700;flex:1}
+.etapa.travada .cab{cursor:default;color:var(--suave)}
+.estado{font-size:.78rem;padding:3px 9px;border-radius:99px;white-space:nowrap}
+.etapa.feita .estado{background:var(--ok-claro);color:var(--ok)}
+.etapa.atual .estado{background:var(--rota);color:#fff}
+.etapa.travada .estado{background:#E4E8EB;color:var(--suave)}
+.corpo{background:var(--folha);border:1px solid var(--linha);border-radius:12px;padding:16px 18px;margin:4px 0 14px;animation:abre .25s ease}
+@keyframes abre{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.corpo>p:first-child{margin-top:0}
+.corpo ul.lista,.corpo ol.passos{padding-left:22px;margin:.5rem 0}
+.corpo ul.lista li,.corpo ol.passos li{margin:.35rem 0}
+.corpo ol.passos li::marker{font-weight:700;color:var(--rota)}
+.aviso{border-left:4px solid var(--espera);background:var(--espera-claro);padding:10px 14px;border-radius:0 8px 8px 0;margin:14px 0;font-size:.95rem}
+.aviso.forte{border-color:var(--perigo);background:var(--perigo-claro)}
+.aviso.dica{border-color:var(--rota);background:var(--rota-claro)}
+.aviso b{display:block;margin-bottom:2px}
+.docs{margin:12px 0;display:grid;gap:8px}
+.doc{border:1px solid var(--linha);border-radius:8px;padding:10px 12px}
+.doc b{display:block}.doc span{font-size:.92rem;color:var(--suave)}
+table.campos{width:100%;border-collapse:collapse;font-size:.93rem;margin:12px 0}
+table.campos th,table.campos td{text-align:left;vertical-align:top;padding:8px 6px;border-top:1px solid var(--linha)}
+table.campos th{width:38%;font-weight:700;color:var(--rota)}
+table.campos tr:first-child th,table.campos tr:first-child td{border-top:0}
+.copiar{display:flex;gap:10px;align-items:flex-start;background:var(--papel);border:1px solid var(--linha);border-radius:8px;padding:10px 12px;margin:8px 0}
+.copiar div{flex:1;font-size:.95rem;white-space:pre-line}
+.copiar button{flex:none;background:var(--rota);color:#fff;border:0;border-radius:6px;padding:6px 10px;font-size:.85rem;font-weight:700;cursor:pointer}
+.copiar button.ok{background:var(--ok)}
+.codigo{font-family:ui-monospace,Menlo,monospace;font-size:.9rem;background:var(--papel);padding:2px 6px;border-radius:4px}
+
+.checks{margin:16px 0 4px;padding:0;list-style:none;border-top:1px dashed var(--linha);padding-top:12px}
+.checks p{margin:0 0 6px;font-weight:700;font-size:.92rem;color:var(--suave)}
+.checks label{display:flex;gap:12px;align-items:flex-start;padding:9px 4px;cursor:pointer;border-radius:8px}
+.checks label:hover{background:var(--papel)}
+.checks input{appearance:none;flex:none;width:24px;height:24px;margin:1px 0 0;border:2px solid var(--suave);border-radius:6px;background:#fff;cursor:pointer;display:grid;place-items:center}
+.checks input:checked{background:var(--ok);border-color:var(--ok)}
+.checks input:checked::after{content:"";width:7px;height:12px;border:solid #fff;border-width:0 3px 3px 0;transform:translateY(-2px) rotate(45deg)}
+.checks input:checked+span{color:var(--suave)}
+
+.campo{margin:14px 0}
+.campo label{display:block;font-weight:700;margin-bottom:6px}
+.campo input,.campo select,.campo textarea{width:100%;font:inherit;padding:11px 12px;border:2px solid var(--linha);border-radius:8px;background:#fff}
+.campo textarea{min-height:160px;resize:vertical;line-height:1.45}
+.campo input:focus,.campo select:focus,.campo textarea:focus{border-color:var(--rota);outline:none}
+.contador{font-size:.92rem;margin-top:6px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.contador .faixa{height:8px;border-radius:4px;background:var(--linha);flex-basis:100%;overflow:hidden}
+.contador .faixa i{display:block;height:100%;background:var(--ok);transition:width .3s}
+.contador.alto .faixa i{background:var(--espera)}
+.contador.estourou .faixa i{background:var(--perigo)}
+.protocolo{border:2px solid var(--rota);border-radius:10px;padding:12px 14px;margin:10px 0}
+.protocolo b{font-size:1.1rem}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--rota);color:#fff;border:0;padding:11px 16px;border-radius:8px;font-weight:700;text-decoration:none;cursor:pointer;margin-top:8px}
+.btn.sec{background:transparent;color:var(--rota);border:2px solid var(--rota)}
+.links{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.nota{font-size:.9rem;color:var(--suave);margin:.4rem 0 0}
+
+figure{margin:16px 0}
+figure img{max-width:100%;border-radius:8px;border:1px solid var(--linha);display:block;background:#fff}
+figcaption{font-size:.88rem;color:var(--suave);margin-top:6px}
+.par{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:420px){.par{grid-template-columns:1fr}}
+
+.fim{background:var(--ok);color:#fff;border-radius:14px;padding:22px;margin:26px 0 0}
+.fim h2{font-size:1.5rem}.fim p{margin:.5rem 0 0}
+footer{border-top:1px solid var(--linha);padding:20px 0 34px;font-size:.88rem;color:var(--suave)}
+footer details{margin-bottom:16px}
+footer summary{cursor:pointer;font-weight:700;color:var(--tinta)}
+footer ol{padding-left:22px}
+footer button{background:none;border:1px solid var(--linha);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--perigo)}
+/* ---------- Tela inicial ---------- */
+#splash{position:fixed;inset:0;z-index:50;background:var(--rota);color:#fff;display:flex;flex-direction:column;
+  padding:calc(40px + env(safe-area-inset-top)) 28px calc(32px + env(safe-area-inset-bottom));
+  transition:opacity .45s ease,visibility .45s}
+#splash.some{opacity:0;visibility:hidden}
+#splash .selo{font-family:"Zilla Slab",serif;font-weight:700;font-size:1rem;letter-spacing:.04em;opacity:.8}
+#splash h1{font-size:2.6rem;line-height:1.05;margin-top:auto;max-width:12ch}
+#splash .sub{font-size:1.05rem;opacity:.9;margin:14px 0 0;max-width:34ch}
+#splash .trilha{margin:34px 0 0;display:grid;grid-template-columns:repeat(4,1fr);position:relative}
+#splash .trilha::before{content:"";position:absolute;left:12.5%;right:12.5%;top:9px;height:3px;background:rgba(255,255,255,.35)}
+#splash .trilha div{text-align:center;font-size:.72rem;line-height:1.2;position:relative;opacity:.9}
+#splash .trilha i{display:block;width:21px;height:21px;margin:0 auto 6px;border-radius:50%;background:#fff;
+  animation:pulso 2.4s ease-in-out infinite}
+#splash .trilha div:nth-child(2) i{animation-delay:.4s}
+#splash .trilha div:nth-child(3) i{animation-delay:.8s}
+#splash .trilha div:nth-child(4) i{animation-delay:1.2s}
+@keyframes pulso{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+#splash .acoes{margin-top:auto;display:grid;gap:10px}
+#splash .iniciar{background:#fff;color:var(--rota);border:0;border-radius:12px;padding:16px;font-size:1.15rem;font-weight:700;cursor:pointer}
+#splash .iniciar:active{transform:scale(.98)}
+#splash .retomar{background:none;border:0;color:#fff;opacity:.85;font-size:.95rem;cursor:pointer;padding:6px;text-decoration:underline}
+#splash .rodape{font-size:.78rem;opacity:.65;margin-top:18px;text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="splash" role="dialog" aria-label="Tela inicial">
+  <div class="selo">UNIRIO · RSC-PCCTAE</div>
+  <h1>Seu RSC, passo a passo.</h1>
+  <p class="sub">Um guia feito por quem já passou pelo processo: do Assistente ao SEI, com as telas reais do SEI e os pontos de atenção de cada etapa.</p>
+  <div class="trilha"><div><i></i>Com você</div><div><i></i>Protocolo</div><div><i></i>Sua unidade</div><div><i></i>CRSC</div></div>
+  <div class="acoes">
+    <button type="button" class="iniciar" id="btn-iniciar">Iniciar</button>
+  </div>
+</div>
+
+<header>
+  <div class="wrap">
+    <h1>Guia do RSC-PCCTAE</h1>
+    <p>Da preparação dos documentos até o processo aberto na CRSC da UNIRIO, pelo celular.</p>
+    <div class="tramite" id="tramite" aria-label="Onde está o seu processo"></div>
+    <div class="onde" id="onde" role="status"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <details class="intro">
+    <summary>O que é o RSC e como este guia funciona</summary>
+    <p>O Reconhecimento de Saberes e Competências (RSC-PCCTAE) faz o servidor técnico-administrativo subir de nível. Para cada nível é preciso comprovar um número mínimo de itens e de pontos, com declarações e certificados em PDF, e escrever um Memorial Descritivo.</p>
+    <p>O pedido tem três partes bem separadas, e é fácil confundi-las:</p>
+    <ul>
+      <li><b>Preparar</b> os documentos fora do SEI, no Assistente RSC.</li>
+      <li><b>Abrir o processo</b> por e-mail ao Protocolo e esperar a resposta.</li>
+      <li><b>Montar e enviar</b> no SEI, só depois que o processo existir.</li>
+    </ul>
+    <p>Cada etapa abaixo só libera quando você confirma os pontos essenciais. O progresso fica salvo neste aparelho. Uma IA como o Claude pode ajudar a organizar o memorial e tirar dúvidas em qualquer fase.</p>
+  </details>
+  <div id="app"></div>
+</main>
+
+<footer class="wrap">
+  <details>
+    <summary>Fluxo resumido para consulta rápida</summary>
+    <ol id="resumo"></ol>
+  </details>
+  <p id="revisao"></p>
+  <p>Guia prático montado a partir de um processo real feito pelo celular, em outubro de 2026. Procedimentos, modelos e endereços podem mudar; em caso de dúvida, confirme com a CRSC ou com a Equipe do SEI (sei@unirio.br).</p>
+  <button type="button" id="zerar">Recomeçar do zero</button>
+</footer>
+
+<script>
+/* =====================================================================
+   CONFIGURAÇÃO — edite aqui sem mexer no resto do código
+   ===================================================================== */
+const REVISAO = "outubro de 2026";
+
+const LINKS = {
+  assistente:  "https://rsc.unirio.br",
+  modeloOficio:"https://docs.google.com/document/d/1mBvxFszjtOcOFNBuUsEXdwo_M4u5vXdF/edit?usp=share_link&ouid=117880243788880670955&rtpof=true&sd=true",
+  sei:         "https://sei.unirio.br",
+  govbr:       "https://assinador.iti.br",
+  crsc:        ""
+};
+
+// Protocolos da UNIRIO (lista enviada pela Equipe do SEI). Acrescente ou corrija aqui.
+const PROTOCOLOS = [
+  {sigla:"CCBS",    nome:"Protocolo CCBS", email:"ccbs@unirio.br",
+   nota:"Centro de Ciências Biológicas e da Saúde. É o Protocolo das unidades de saúde, como o HUGG. Não confundir com Centro Cirúrgico.", padrao:"HUGG e unidades de saúde"},
+  {sigla:"SPG",     nome:"Protocolo SPG",     email:"protocolo.spg@unirio.br"},
+  {sigla:"CLA",     nome:"Protocolo CLA",     email:"protocolocla@unirio.br", nota:"Centro de Letras e Artes."},
+  {sigla:"CCH",     nome:"Protocolo CCH",     email:"cch.protocolo@unirio.br", nota:"Centro de Ciências Humanas e Sociais."},
+  {sigla:"CCET",    nome:"Protocolo CCET",    email:"protocoloccet@uniriotec.br", nota:"Centro de Ciências Exatas e Tecnologia. Atenção ao domínio: uniriotec.br."},
+  {sigla:"CCJP",    nome:"Protocolo CCJP",    email:"protocoloccjp@unirio.br", nota:"Centro de Ciências Jurídicas e Políticas."},
+  {sigla:"Progepe", nome:"Protocolo Progepe", email:"protocolo.progepe@unirio.br"}
+];
+
+// Figuras extras por etapa: FIGURAS[número] = [{src:"img/arquivo.png", legenda:"..."}]
+const FIGURAS = {};
+
+// Texto do Despacho de encaminhamento
+const TEXTO_DESPACHO = `À Comissão de Reconhecimento de Saberes e Competências – CRSC-PCCTAE
+
+Encaminho o presente processo para análise da solicitação de Reconhecimento de Saberes e Competências – RSC-PCCTAE, acompanhado do Requerimento, Memorial Descritivo, Relatório RSC-PCCTAE e respectivos documentos comprobatórios.
+
+Solicito o prosseguimento da análise pela Comissão de Reconhecimento de Saberes e Competências – CRSC-PCCTAE.
+
+Atenciosamente,`;
+/* ===================================================================== */
+
+const FASES = [
+  {t:"Preparar a solicitação", s:"Tudo acontece fora do SEI.", de:1, ate:5},
+  {t:"Pedir a abertura do processo", s:"Por e-mail, ao Protocolo da sua unidade.", de:6, ate:9},
+  {t:"Montar o processo no SEI", s:"Só depois que o processo existir.", de:10, ate:11},
+  {t:"Encaminhar à CRSC", s:"Despacho, envio e confirmação.", de:12, ate:14}
+];
+
+const PASTA_IMG = "";   // deixe "" se as figuras estão ao lado do index.html; use "img/" se estiverem numa pasta
+const fig = (src,leg) => `<figure><img src="${PASTA_IMG}${src}" alt="${leg}" loading="lazy"><figcaption>${leg}</figcaption></figure>`;
+const copiar = (txt,rot) => `<div class="copiar"><div>${txt}</div><button type="button" data-copiar="${encodeURIComponent(txt)}">${rot||"Copiar"}</button></div>`;
+
+const ETAPAS = [
+ {n:1, t:"Garanta os acessos", corpo:`
+   <p>Antes de qualquer documento, você precisa de dois acessos. Sem eles o pedido trava no meio do caminho.</p>
+   <div class="docs">
+     <div class="doc"><b>Login e senha do SEI</b><span>São os mesmos do Portal UNIRIO. Se você nunca entrou, solicite o acesso à Equipe do SEI (sei@unirio.br) antes de começar.</span></div>
+     <div class="doc"><b>Conta Gov.br com assinatura eletrônica</b><span>Os três documentos gerados pelo Assistente são assinados pelo Gov.br. A assinatura exige conta nível prata ou ouro.</span></div>
+     <div class="doc"><b>Nível pretendido</b><span>Saiba para qual nível de RSC você está pedindo e quantos itens e pontos ele exige. Isso define quais comprovantes você vai reunir.</span></div>
+   </div>`,
+  checks:["Consigo entrar no sei.unirio.br com meu login do Portal","Minha conta Gov.br assina documentos","Sei o nível que vou pedir e quantos itens e pontos ele exige"]},
+
+ {n:2, t:"Reúna e nomeie os comprovantes", corpo:`
+   <p>Junte certificados, declarações, portarias, comprovantes de preceptoria, orientações, produção acadêmica e registros. Tudo em PDF, numa pasta só para o RSC.</p>
+   <div class="aviso dica"><b>Nomeie cada arquivo com o código do critério</b>Salve cada comprovante já com o nome do documento e o item do RSC em que ele entra, por exemplo <span class="codigo">V.I11 - Certificado curso X.pdf</span>. Na hora do upload no SEI, o nome do arquivo já diz o Tipo do Documento e o Nome na Árvore.</div>
+   <div class="aviso"><b>Regra prática</b>Cada atividade declarada precisa de um documento que mostre o que foi feito, em qual período e, quando for o caso, por qual instituição.</div>
+   <p>Declarações de vários anos sobre a mesma atividade podem virar um único PDF consolidado, como "Preceptoria 2005-2025". Isso simplifica muito a montagem no SEI.</p>`,
+  checks:["Tenho uma pasta só para o RSC, com tudo em PDF","Cada arquivo tem o nome do documento e o código do critério","Cada atividade que vou declarar tem o seu comprovante"]},
+
+ {n:3, t:"Escreva o Memorial Descritivo", especial:"memorial", corpo:`
+   <p>O Memorial conta a sua trajetória e as atividades usadas no pedido. Limite de <b>8.000 caracteres</b>; o tamanho ideal é em torno de <b>5.000</b>.</p>
+   <p>Escreva num bloco de notas ou peça ajuda a uma IA, colando a lista das suas atividades e comprovantes. Depois cole o texto aqui para conferir o tamanho:</p>`,
+  checks:["Meu memorial está pronto e dentro do limite"]},
+
+ {n:4, t:"Use o Assistente RSC", link:["Abrir o Assistente (rsc.unirio.br)","assistente"], corpo:`
+   <p>No Assistente você informa seus dados, registra as atividades e critérios, anexa as declarações e certificados em PDF e cola o texto do Memorial.</p>
+   <p>Ao finalizar, ele gera um arquivo <b>ZIP</b> com três documentos:</p>
+   <div class="docs">
+     <div class="doc"><b>Requerimento RSC</b><span>O pedido formal.</span></div>
+     <div class="doc"><b>Memorial Descritivo</b><span>Seu texto, no modelo oficial.</span></div>
+     <div class="doc"><b>Relatório RSC-TAE</b><span>Resumo dos itens, critérios e pontuação.</span></div>
+   </div>
+   <div class="aviso"><b>Não finalize só pela pontuação</b>Atingir a pontuação não basta. Confira períodos, atividades, critérios e se cada atividade está ligada ao comprovante certo.</div>`,
+  checks:["Conferi dados, períodos, atividades, critérios e pontuação","Baixei o ZIP e abri os três PDFs: legíveis e completos"]},
+
+ {n:5, t:"Assine os três documentos no Gov.br", link:["Abrir o assinador Gov.br","govbr"], corpo:`
+   <p>Requerimento, Memorial e Relatório precisam, os três, da assinatura eletrônica do Gov.br. Depois de assinar, salve cada um com um nome claro, por exemplo <span class="codigo">Requerimento_RSC_assinado.pdf</span>.</p>
+   <div class="aviso"><b>Guarde as versões assinadas separadas das originais</b>No SEI entram só as assinadas. Versões antigas misturadas na pasta são a causa mais comum de anexar o arquivo errado.</div>`,
+  checks:["Requerimento assinado no Gov.br","Memorial assinado no Gov.br","Relatório assinado no Gov.br","Os três PDFs assinados estão salvos com nomes claros"]},
+
+ {n:6, t:"Preencha o formulário de abertura", link:["Abrir o modelo do formulário","modeloOficio"], corpo:`
+   <p>Esta etapa ainda acontece <b>antes</b> do SEI. O formulário/ofício pede ao Protocolo que abra (autue) o processo de RSC-PCCTAE em seu nome.</p>
+   <p>Campos que você preenche:</p>
+   <ul class="lista">
+     <li>Tipo de processo: Reconhecimento de Saberes e Competências (RSC-PCCTAE)</li>
+     <li>Nível pretendido</li>
+     <li>Nome do interessado</li>
+     <li>Unidade para onde o processo deve ir depois de aberto (a sua lotação, por exemplo SANE HUGG)</li>
+   </ul>
+   <div class="aviso forte"><b>Não altere o modelo</b>Preencha só os campos do servidor e da unidade. Códigos, classificações e textos institucionais ficam como estão.</div>`,
+  checks:["Usei o modelo vigente","Preenchi o nível pretendido e a unidade de destino","Não alterei códigos nem textos do modelo","Salvei em PDF e assinei"]},
+
+ {n:7, t:"Envie o e-mail ao Protocolo", especial:"protocolo", corpo:`
+   <p>Mande o formulário assinado por e-mail ao Protocolo que atende a sua unidade. A UNIRIO tem vários, e a lista institucional não diz qual serve para cada setor.</p>`,
+  checks:["Enviei o e-mail com o formulário em anexo"]},
+
+ {n:8, t:"Aguarde a resposta do Protocolo", especial:"numero", corpo:`
+   <div class="aviso"><b>E-mail enviado não é processo aberto</b>O processo só existe quando o Protocolo responde. Pode levar alguns dias. Não entre no SEI para montar nada antes disso.</div>
+   <p>A resposta traz o <b>número do processo</b>, no formato 23102.000000/2026-00. Anote aqui, porque você vai conferi-lo várias vezes:</p>`,
+  checks:["Recebi a resposta do Protocolo com o número do processo"]},
+
+ {n:9, t:"Encontre o processo no SEI", link:["Abrir o SEI","sei"], corpo:`
+   <p>Entre no sei.unirio.br pelo celular. Ao lado de <b>Menu</b> aparece a sua unidade (no exemplo, SANE HUGG).</p>
+   <ol class="passos">
+     <li>Toque nos três pontinhos ao lado da unidade e em <b>Controle de Processos</b>.</li>
+     <li>Embaixo, em <b>Recebidos</b>, aparece o seu processo. Confira o número com o do e-mail.</li>
+     <li>Toque no número para abrir.</li>
+   </ol>
+   ${fig("08-controle-processos.png","Controle de Processos: a unidade ao lado de Menu e os processos recebidos embaixo.")}
+   <p>O processo chega quase vazio: só o Ofício que o Protocolo anexou. Toque no número em negrito, no canto superior esquerdo, e o SEI confirma onde ele está.</p>
+   <div class="par">
+     ${fig("08-processo-recebido.png","Recém-aberto: apenas o Ofício do Protocolo na árvore.")}
+     ${fig("08-aberto-sane-hugg.png","A mensagem confirma que o processo está na sua unidade.")}
+   </div>`,
+  checks:["Encontrei o processo em Recebidos","O número confere com o do e-mail","Vi a mensagem \"Processo aberto somente na unidade\" com a minha unidade"]},
+
+ {n:10, t:"Inclua os documentos no SEI", corpo:`
+   <p>Com o processo aberto, toque nos <b>três pontinhos</b> da barra de ações. Abre uma grade de ícones sem legenda. Só dois interessam:</p>
+   ${fig("menu-icones.png","1: a folha tracejada amarela inclui documentos. 2: a pasta com seta verde envia o processo (etapa 13).")}
+   <ol class="passos">
+     <li>Toque na <b>folha tracejada amarela</b> (Incluir Documento).</li>
+     <li>Em Gerar Documento, escolha <b>Externo</b>. (O Despacho da etapa 12 sai desta mesma tela, na outra opção.)</li>
+     <li>Preencha o formulário Registrar Documento Externo conforme a tabela abaixo, anexe o PDF e toque em Salvar.</li>
+     <li>Repita para cada arquivo.</li>
+   </ol>
+   <div class="par">
+     ${fig("09-gerar-documento.png","Gerar Documento: Externo para os PDFs, Despacho para o encaminhamento.")}
+     ${fig("09-registrar-preenchido.png","Formulário preenchido para uma declaração digitalizada.")}
+   </div>
+   <table class="campos">
+     <tr><th>Tipo do Documento</th><td>Requerimento, Memorial, Relatório ou Declaração, conforme o arquivo.</td></tr>
+     <tr><th>Data do Documento</th><td>A data que consta no próprio documento.</td></tr>
+     <tr><th>Nome na Árvore</th><td>O nome do documento, como "Orientador de TCC" ou "Preceptoria 2005-2025". É o que aparece na lista do processo.</td></tr>
+     <tr><th>Formato</th><td><b>Nato-digital</b> se o arquivo nasceu digital (os três documentos do Assistente). <b>Digitalizado nesta Unidade</b> para tudo que você escaneou; aí aparece Tipo de Conferência: escolha <b>Cópia simples</b>.</td></tr>
+     <tr><th>Remetente, Interessados, Classificação, Observações</th><td>Podem ficar em branco.</td></tr>
+     <tr><th>Nível de Acesso</th><td><b>Restrito</b>. A Hipótese Legal já vem preenchida: Informação Pessoal (Art. 31 da Lei nº 12.527/2011).</td></tr>
+     <tr><th>Anexar Arquivo</th><td>Escolha o PDF. Ele aparece na Lista de Anexos. Só então toque em <b>Salvar</b>.</td></tr>
+   </table>
+   <div class="par">
+     ${fig("09-copia-simples.png","Digitalizado nesta Unidade abre três opções: Cópia simples.")}
+     ${fig("09-nivel-acesso.png","Restrito, com a hipótese legal já sugerida, e o botão Anexar Arquivo.")}
+   </div>
+   ${fig("09-anexado.png","PDF anexado na lista. Agora sim, Salvar.")}
+   <p>Ordem recomendada, para a árvore ficar clara: Requerimento, Memorial, Relatório e depois os comprovantes.</p>
+   <div class="aviso"><b>Evite duplicidade</b>Se um PDF consolidado já contém um comprovante, não o inclua de novo separado. Nada de versões antigas ou não assinadas.</div>`,
+  checks:["Incluí o Requerimento assinado","Incluí o Memorial assinado","Incluí o Relatório assinado","Incluí todos os comprovantes, com nomes claros na árvore","Todos ficaram como Restrito"]},
+
+ {n:11, t:"Faça a conferência completa", corpo:`
+   <p>Abra cada documento na árvore do processo e passe item por item. Se algo estiver errado, corrija antes do Despacho.</p>`,
+  checks:["Requerimento correto e assinado","Memorial correto e assinado","Relatório correto e assinado","Todos os comprovantes necessários incluídos","Arquivos abrem, estão legíveis e completos","Cada atividade declarada tem o comprovante correspondente","Sem arquivos errados, repetidos ou versões antigas","Nomes compreensíveis na árvore do SEI"]},
+
+ {n:12, t:"Crie e assine o Despacho", corpo:`
+   <p>O Despacho é o que encaminha formalmente o pedido à CRSC. O caminho é o mesmo da etapa 10: três pontinhos, folha tracejada amarela, Gerar Documento. Desta vez escolha <b>Despacho</b>.</p>
+   ${fig("11-despacho-form.png","Tela do Despacho antes de preencher.")}
+   <table class="campos">
+     <tr><th>Texto Inicial</th><td>Nenhum</td></tr>
+     <tr><th>Descrição</th><td>${copiar("Encaminhamento para análise do RSC-PCCTAE")}</td></tr>
+     <tr><th>Nome na Árvore</th><td>${copiar("Encaminhamento RSC-PCCTAE")}</td></tr>
+     <tr><th>Interessados, Classificação, Observações</th><td>Em branco.</td></tr>
+     <tr><th>Nível de Acesso</th><td>Restrito, hipótese legal Informação Pessoal (Art. 31 da Lei nº 12.527/2011).</td></tr>
+   </table>
+   <p>Toque em <b>Salvar</b>. Abre o editor de texto do SEI.</p>
+   <div class="aviso forte"><b>O editor vem com um texto errado</b>O SEI preenche o Despacho com um modelo sobre estágio probatório e processo disciplinar, que não tem nada a ver com o RSC. Apague tudo do "Senhor(a):" até o "Atenciosamente," e cole o texto abaixo. Não mexa no cabeçalho, no número do processo nem na data.</div>
+   ${copiar(TEXTO_DESPACHO,"Copiar texto")}
+   <div class="par">
+     ${fig("11-editor-modelo.png","Antes: o texto-modelo que precisa ser apagado.")}
+     ${fig("11-despacho-pronto.png","Depois: como deve ficar antes de assinar.")}
+   </div>
+   <ol class="passos">
+     <li>Toque em <b>Salvar</b>, no canto superior esquerdo do editor.</li>
+     <li>Toque em <b>Assinar</b>, ao lado.</li>
+     <li>Na janela de assinatura, em <b>Cargo/Função</b>, escolha o seu cargo técnico-administrativo (por exemplo, Assistente em Administração). Nunca Docente ou outra função, mesmo que você dê aula: a assinatura deve refletir o vínculo pelo qual você pede o RSC.</li>
+     <li>Digite a senha do SEI e confirme.</li>
+   </ol>
+   ${fig("11-assinatura.png","Janela de assinatura: Órgão e Assinante vêm preenchidos; você escolhe o Cargo/Função e digita a senha.")}
+   <div class="aviso dica"><b>Confira se assinou mesmo</b>Volte pela seta do próprio SEI, não pela do navegador. Na árvore deve aparecer "Despacho Encaminhamento RSC-PCCTAE" com o símbolo de assinado, e não a caneta de rascunho.</div>
+   <div class="aviso"><b>Anexar não é enviar</b>Os PDFs e o Despacho ainda estão na sua unidade. Só a próxima etapa leva o processo à CRSC.</div>`,
+  checks:["Criei o Despacho com descrição, nome na árvore e acesso restrito","Troquei o texto-modelo pelo texto de encaminhamento","Salvei e assinei com o meu cargo técnico-administrativo","Vi o Despacho assinado na árvore do processo"]},
+
+ {n:13, t:"Envie o processo à CRSC", especial:"envio", corpo:`
+   <p>Esta é a etapa com mais armadilhas no celular. Siga na ordem.</p>
+   <ol class="passos">
+     <li>Na barra de ações, toque nos três pontinhos e depois na <b>pasta amarela com seta verde</b> (Enviar Processo).</li>
+     <li>A tela Enviar Processo abre com <b>Processos: 0 Item</b> e <b>Unidades: 0 Item</b>. O SEI não traz o seu processo selecionado.</li>
+     <li>Toque na caixa <b>Processos</b>. Abre um seletor; marque o seu processo e feche no X. O número deve aparecer na caixa.</li>
+     <li>Toque na <b>lupa</b> ao lado de Unidades. Abre a janela Selecionar Unidades, com mais de mil registros.</li>
+     <li>No campo <b>Sigla</b>, digite <b>RSC</b> (sem o C na frente) e toque em Pesquisar. Aparece uma única linha: CRSC.</li>
+     <li>Marque a caixinha da linha CRSC.</li>
+     <li>Toque na <b>seta verde à direita da linha</b>, na coluna Ações. <b>Não</b> toque no botão azul Transportar: no celular ele não leva a unidade para o campo.</li>
+   </ol>
+   <div class="par">
+     ${fig("12-enviar-vazio.png","Como a tela abre: os dois campos vazios.")}
+     ${fig("12-seletor-processo.png","Tocando em Processos, o seletor mostra o seu processo para marcar.")}
+   </div>
+   <div class="par">
+     ${fig("12-crsc-encontrada.png","Sigla RSC encontra a CRSC. A caixinha vem desmarcada.")}
+     ${fig("12-crsc-marcada.png","Marcada. Agora a seta verde da direita, não o Transportar.")}
+   </div>
+   <p>Antes de enviar, a tela precisa estar assim:</p>
+   <table class="campos">
+     <tr><th>Processos</th><td id="num-final">o número do seu processo</td></tr>
+     <tr><th>Unidades</th><td>CRSC - Comissão de Reconhecimento de Saberes e Competências</td></tr>
+     <tr><th>Manter processo aberto na unidade atual</th><td>Desmarcado. Assim o processo sai da sua unidade e passa a tramitar na CRSC.</td></tr>
+     <tr><th>Remover anotação, Enviar e-mail de notificação</th><td>Desmarcados.</td></tr>
+     <tr><th>Retorno Programado</th><td>Nada marcado.</td></tr>
+   </table>
+   <div class="aviso forte"><b>Se algum campo estiver vazio ou errado, não envie</b>Marque os itens abaixo só depois de olhar a tela de verdade. Então toque em <b>Enviar</b>, no canto superior direito.</div>`,
+  checks:["O número certo aparece em Processos","CRSC aparece de fato em Unidades","Manter processo aberto está desmarcado","O Despacho já está assinado e a documentação conferida","Toquei em Enviar"]},
+
+ {n:14, t:"Confirme que chegou na CRSC", corpo:`
+   <p>Depois do envio, o SEI mostra a mesma mensagem que você viu na etapa 9, agora com a comissão no lugar da sua unidade:</p>
+   <div class="aviso dica" style="font-family:Georgia,serif;font-weight:700">Processo aberto somente na unidade CRSC.</div>
+   <p>Ela confirma que o processo saiu da sua unidade e está aberto na CRSC. A partir daqui é acompanhar o andamento pelo SEI.</p>`,
+  checks:["Vi a mensagem \"Processo aberto somente na unidade CRSC\""]}
+];
+
+/* ---------- Estado ---------- */
+const CHAVE = "guia-rsc-unirio-v2";
+let estado = {c:{}, protocolo:"", processo:"", memorial:"", aberta:null};
+let podeSalvar = true;
+try { const s = localStorage.getItem(CHAVE); if (s) estado = Object.assign(estado, JSON.parse(s)); } catch(e){ podeSalvar=false; }
+function salvar(){ if(!podeSalvar) return; try{ localStorage.setItem(CHAVE, JSON.stringify(estado)); }catch(e){ podeSalvar=false; } }
+
+const marcado = (n,i) => !!estado.c[n+"-"+i];
+function completa(e){
+  const ok = e.checks.every((_,i)=>marcado(e.n,i));
+  if (e.especial==="protocolo") return ok && !!estado.protocolo;
+  if (e.especial==="numero")    return ok && estado.processo.trim().length>4;
+  return ok;
+}
+function liberada(n){ for(const e of ETAPAS){ if(e.n>=n) break; if(!completa(e)) return false; } return true; }
+function atual(){ const e = ETAPAS.find(e=>!completa(e)); return e ? e.n : ETAPAS.length+1; }
+const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- Partes especiais ---------- */
+function blocoProtocolo(){
+  const opts = PROTOCOLOS.map(p=>`<option value="${p.sigla}" ${estado.protocolo===p.sigla?"selected":""}>${p.nome}${p.padrao?" — "+p.padrao:""}</option>`).join("");
+  const p = PROTOCOLOS.find(p=>p.sigla===estado.protocolo);
+  let info = "";
+  if (p){
+    const assunto = encodeURIComponent("Solicitação de abertura de processo RSC-PCCTAE");
+    const corpo = encodeURIComponent("Prezados,\n\nSolicito a abertura de processo de Reconhecimento de Saberes e Competências (RSC-PCCTAE). Segue em anexo o formulário preenchido e assinado.\n\nNome:\nSIAPE:\nUnidade de lotação:\n\nAtenciosamente,");
+    info = `<div class="protocolo"><b>${p.nome}</b><br><a href="mailto:${p.email}">${p.email}</a>
+      ${p.nota?`<p class="nota">${p.nota}</p>`:""}
+      <a class="btn" href="mailto:${p.email}?subject=${assunto}&body=${corpo}">Escrever e-mail</a>
+      <p class="nota">Anexe o formulário em PDF antes de enviar.</p></div>`;
+  } else if (estado.protocolo==="naosei"){
+    info = `<div class="aviso"><b>Em dúvida?</b>Pergunte à sua chefia qual Protocolo atende o seu setor, ou escreva para a Equipe do SEI: <a href="mailto:sei@unirio.br">sei@unirio.br</a>. Foi assim que a lista acima foi obtida.</div>`;
+  }
+  return `<div class="campo"><label for="protocolo">Qual Protocolo atende a sua unidade?</label>
+    <select id="protocolo"><option value="">Escolha…</option>${opts}<option value="naosei" ${estado.protocolo==="naosei"?"selected":""}>Não sei</option></select></div>${info}`;
+}
+function blocoNumero(){
+  return `<div class="campo"><label for="processo">Número do processo SEI</label>
+    <input id="processo" inputmode="numeric" autocomplete="off" placeholder="23102.000000/2026-00" value="${esc(estado.processo)}"></div>`;
+}
+function blocoMemorial(){
+  return `<div class="campo"><label for="memorial">Rascunho do memorial</label>
+    <textarea id="memorial" placeholder="Cole aqui o texto para contar os caracteres. Ele fica salvo só neste aparelho.">${esc(estado.memorial)}</textarea>
+    <div class="contador" id="contador"></div></div>`;
+}
+function contador(){
+  const el = document.getElementById("contador"); if(!el) return;
+  const n = estado.memorial.length, pct = Math.min(100, n/8000*100);
+  let cls="", msg="";
+  if (n===0) msg="Limite: 8.000 caracteres. Ideal: cerca de 5.000.";
+  else if (n>8000){ cls="estourou"; msg=`Passou do limite em ${(n-8000).toLocaleString("pt-BR")} caracteres.`; }
+  else if (n>6500){ cls="alto"; msg="Dentro do limite, mas longo. Vale enxugar."; }
+  else if (n<3500) msg="Dentro do limite. Pode desenvolver mais, se tiver conteúdo.";
+  else msg="Tamanho bom.";
+  el.className="contador "+cls;
+  el.innerHTML=`<span><b>${n.toLocaleString("pt-BR")}</b> caracteres</span><span>${msg}</span><div class="faixa"><i style="width:${pct}%"></i></div>`;
+}
+
+/* ---------- Renderização ---------- */
+function render(){
+  const at = atual();
+  if (estado.aberta===null || !liberada(estado.aberta)) estado.aberta = at<=ETAPAS.length ? at : null;
+  let h = "";
+  FASES.forEach(f=>{
+    h += `<h2 class="fase">${f.t}<small>${f.s}</small></h2><ol class="rota">`;
+    ETAPAS.filter(e=>e.n>=f.de && e.n<=f.ate).forEach(e=>{
+      const feita = completa(e), lib = liberada(e.n), aberta = estado.aberta===e.n && lib;
+      const cls = feita?"feita":(lib?"atual":"travada");
+      const rot = feita?"Concluída":(lib?"Agora":"Bloqueada");
+      h += `<li class="etapa ${cls} ${e.n===f.ate?"ultima":""}">
+        <span class="marca" aria-hidden="true">${feita?"✓":e.n}</span>
+        <button class="cab" type="button" data-abre="${e.n}" ${lib?"":"disabled"} aria-expanded="${aberta}">
+          <h3>${e.t}</h3><span class="estado">${rot}</span></button>`;
+      if (aberta){
+        h += `<div class="corpo">${e.corpo}`;
+        if (e.especial==="protocolo") h += blocoProtocolo();
+        if (e.especial==="numero")    h += blocoNumero();
+        if (e.especial==="memorial")  h += blocoMemorial();
+        (FIGURAS[e.n]||[]).forEach(fg=>{ h += `<figure><img src="${fg.src}" alt="${esc(fg.legenda||"")}" loading="lazy"><figcaption>${esc(fg.legenda||"")}</figcaption></figure>`; });
+        if (e.link && LINKS[e.link[1]]) h += `<div class="links"><a class="btn sec" href="${LINKS[e.link[1]]}" target="_blank" rel="noopener">${e.link[0]}</a></div>`;
+        h += `<div class="checks"><p>Confirme para seguir</p>` + e.checks.map((c,i)=>
+          `<label><input type="checkbox" data-c="${e.n}-${i}" ${marcado(e.n,i)?"checked":""}><span>${c}</span></label>`).join("") + `</div>`;
+        if (e.especial==="numero" && estado.processo.trim().length<=4) h += `<p class="nota">Informe o número do processo para liberar a próxima etapa.</p>`;
+        if (e.especial==="protocolo" && !estado.protocolo) h += `<p class="nota">Escolha o Protocolo para liberar a próxima etapa.</p>`;
+        if (feita && e.n<ETAPAS.length) h += `<button class="btn" type="button" data-abre="${e.n+1}">Ir para a etapa ${e.n+1}</button>`;
+        h += `</div>`;
+      }
+      h += `</li>`;
+    });
+    h += `</ol>`;
+  });
+  if (at===ETAPAS.length+1) h += `<div class="fim" role="status"><h2>Pedido entregue à CRSC</h2>
+    <p>Processo ${esc(estado.processo)} aberto na Comissão de Reconhecimento de Saberes e Competências. Agora é acompanhar pelo SEI.</p></div>`;
+  document.getElementById("app").innerHTML = h;
+  const nf = document.getElementById("num-final"); if (nf && estado.processo) nf.textContent = estado.processo;
+  contador(); renderTramite();
+}
+
+function renderTramite(){
+  const done = n => completa(ETAPAS[n-1]) && liberada(n);
+  let pos = 0, txt = "<b>Com você.</b> Preparando a documentação.";
+  if (done(7)) { pos = 1; txt = "<b>No Protocolo.</b> Aguardando a criação do processo."; }
+  if (done(9)) { pos = 2; txt = `<b>Na sua unidade.</b> Processo ${esc(estado.processo)} pronto para montagem.`; }
+  if (done(13)){ pos = 3; txt = "<b>Enviado à CRSC.</b> Confirme a mensagem no SEI."; }
+  if (done(14)){ pos = 3; txt = "<b>Na CRSC.</b> Pedido entregue."; }
+  const nomes = ["Com você","Protocolo","Sua unidade","CRSC"];
+  document.getElementById("tramite").innerHTML =
+    `<div class="barra" style="width:${pos*25}%"></div>` +
+    nomes.map((n,i)=>`<div class="parada ${i<pos?"passou":""} ${i===pos?"aqui":""}"><i></i>${n}</div>`).join("");
+  document.getElementById("onde").innerHTML = txt;
+}
+
+/* ---------- Eventos ---------- */
+const app = document.getElementById("app");
+app.addEventListener("click", ev=>{
+  const cp = ev.target.closest("[data-copiar]");
+  if (cp){
+    const txt = decodeURIComponent(cp.dataset.copiar);
+    const feito = ()=>{ cp.textContent="Copiado"; cp.classList.add("ok"); setTimeout(()=>{cp.textContent="Copiar";cp.classList.remove("ok");},1800); };
+    if (navigator.clipboard) navigator.clipboard.writeText(txt).then(feito).catch(()=>alert(txt));
+    else { const t=document.createElement("textarea"); t.value=txt; document.body.appendChild(t); t.select(); try{document.execCommand("copy");feito();}catch(e){alert(txt);} t.remove(); }
+    return;
+  }
+  const b = ev.target.closest("[data-abre]"); if(!b || b.disabled) return;
+  const n = +b.dataset.abre;
+  estado.aberta = (estado.aberta===n && b.classList.contains("cab")) ? -1 : n;
+  salvar(); render();
+  if (!b.classList.contains("cab")) document.querySelector(`[data-abre="${n}"].cab`)?.scrollIntoView({behavior:"smooth",block:"start"});
+});
+app.addEventListener("change", ev=>{
+  const t = ev.target;
+  if (t.dataset.c){
+    const n = +t.dataset.c.split("-")[0], antes = completa(ETAPAS[n-1]);
+    estado.c[t.dataset.c] = t.checked;
+    if (!antes && completa(ETAPAS[n-1]) && n<ETAPAS.length) estado.aberta = n+1;
+  }
+  if (t.id==="protocolo") estado.protocolo = t.value;
+  salvar(); render();
+});
+app.addEventListener("input", ev=>{
+  const t = ev.target;
+  if (t.id==="memorial"){ estado.memorial = t.value; salvar(); contador(); return; }
+  if (t.id!=="processo") return;
+  const era = completa(ETAPAS[7]);
+  estado.processo = t.value; salvar();
+  if (era !== completa(ETAPAS[7])) { render(); const i=document.getElementById("processo"); if(i){ i.focus(); i.setSelectionRange(i.value.length,i.value.length);} }
+  else renderTramite();
+});
+document.getElementById("zerar").addEventListener("click", ()=>{
+  if (!confirm("Apagar todo o progresso, inclusive o rascunho do memorial, e recomeçar?")) return;
+  estado = {c:{}, protocolo:"", processo:"", memorial:"", aberta:null}; salvar(); render(); scrollTo(0,0);
+});
+
+document.getElementById("revisao").textContent = "Orientações revisadas em " + REVISAO + ".";
+document.getElementById("resumo").innerHTML = ["Login do SEI e conta Gov.br","Comprovantes em PDF, nomeados com o código do critério","Memorial (até 8.000 caracteres, ideal 5.000)","Assistente rsc.unirio.br gera o ZIP com os 3 documentos","Assinar os 3 no Gov.br","Formulário de abertura","E-mail ao Protocolo (saúde/HUGG: ccbs@unirio.br)","Aguardar a resposta: ela traz o número do processo","SEI: Controle de Processos, Recebidos, abrir o processo","Três pontinhos, folha tracejada, Externo: incluir cada PDF como Restrito","Conferência completa","Despacho: trocar o texto-modelo, Salvar, Assinar com o cargo TAE","Enviar Processo: selecionar o processo, sigla RSC, caixinha, seta verde, Enviar","Confirmar: Processo aberto somente na unidade CRSC"].map(t=>`<li>${t}</li>`).join("");
+
+/* ---------- PWA: manifesto embutido ---------- */
+const icone = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="96" fill="#1F5AA6"/><text x="256" y="320" font-family="Georgia,serif" font-size="190" font-weight="700" fill="#fff" text-anchor="middle">RSC</text></svg>');
+const manifesto = {name:"Guia RSC-PCCTAE UNIRIO", short_name:"Guia RSC", start_url:location.href, display:"standalone",
+  background_color:"#F2F4F3", theme_color:"#1F5AA6", icons:[{src:icone, sizes:"512x512", type:"image/svg+xml"}]};
+const lm = document.createElement("link"); lm.rel="manifest";
+lm.href = URL.createObjectURL(new Blob([JSON.stringify(manifesto)],{type:"application/json"}));
+document.head.appendChild(lm);
+const li = document.createElement("link"); li.rel="apple-touch-icon"; li.href=icone; document.head.appendChild(li);
+
+render();
+
+/* ---------- Tela inicial ---------- */
+(function(){
+  const sp = document.getElementById("splash"), bi = document.getElementById("btn-iniciar");
+  const temProgresso = Object.values(estado.c).some(Boolean) || estado.processo || estado.memorial;
+  if (temProgresso) bi.textContent = "Continuar de onde parei";
+  document.body.style.overflow = "hidden";
+  bi.addEventListener("click", ()=>{
+    sp.classList.add("some"); document.body.style.overflow = "";
+    setTimeout(()=>sp.remove(), 500);
+    const alvo = document.querySelector(".etapa.atual .cab");
+    if (temProgresso && alvo) setTimeout(()=>alvo.scrollIntoView({behavior:"smooth",block:"start"}), 150);
+  });
+})();
+</script>
+</body>
+</html>
